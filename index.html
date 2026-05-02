@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google TPUs &mdash; LLM Hub</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0a; --bg-card: #0d1117; --bg-code: #161b22;
+            --text-primary: #e6edf3; --text-secondary: #8b949e;
+            --accent: #4285F4; --accent-dim: #4285F444; --accent-glow: #4285F433;
+            --accent-2: #EA4335; --accent-3: #FBBC04; --accent-4: #34A853;
+            --border: #21262d;
+            --font-display: 'Space Grotesk', sans-serif;
+            --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+            --font-body: 'Inter', sans-serif;
+            --max-width: 960px;
+        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+        body { background: var(--bg-primary); color: var(--text-primary);
+               font-family: var(--font-body); font-size: 17px; line-height: 1.7;
+               overflow-x: hidden; }
+        .hero { min-height: 60vh; display: flex; flex-direction: column;
+                justify-content: center; align-items: center;
+                padding: 4rem 1.5rem 3rem; text-align: center; position: relative; }
+        .hero::before { content: ''; position: absolute; top: 0; left: 50%;
+                        transform: translateX(-50%); width: 700px; height: 600px;
+                        background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+                        pointer-events: none; z-index: 0; }
+        .hero > * { position: relative; z-index: 1; }
+        .series-label { font-family: var(--font-mono); font-size: 0.85rem;
+                        color: var(--accent); letter-spacing: 0.15em;
+                        text-transform: uppercase; margin-bottom: 1rem; }
+        .hero h1 { font-family: var(--font-display);
+                   font-size: clamp(2rem, 5vw, 3rem); font-weight: 700;
+                   color: var(--text-primary); line-height: 1.2; margin-bottom: 1rem; }
+        .hero h1 .accent { color: var(--accent); }
+        .hero .subtitle { font-size: 1.1rem; color: var(--text-secondary);
+                          max-width: 720px; margin-bottom: 1.5rem; }
+        .tags { display: flex; flex-wrap: wrap; gap: 0.5rem;
+                justify-content: center; margin-bottom: 1rem; }
+        .tag { font-family: var(--font-mono); font-size: 0.75rem;
+               padding: 0.25rem 0.75rem; border-radius: 999px;
+               border: 1px solid var(--accent); color: var(--accent);
+               background: var(--accent-dim); white-space: nowrap; }
+        .tag.r { border-color: var(--accent-2); color: var(--accent-2); background: rgba(234,67,53,0.10); }
+        .tag.y { border-color: var(--accent-3); color: var(--accent-3); background: rgba(251,188,4,0.10); }
+        .tag.g { border-color: var(--accent-4); color: var(--accent-4); background: rgba(52,168,83,0.10); }
+        .container { max-width: var(--max-width); margin: 0 auto; padding: 2rem 1.5rem; }
+        h2 { font-family: var(--font-display); font-size: 1.6rem; font-weight: 700;
+             color: var(--accent); margin: 1rem 0 1.25rem; }
+        .deck-list { display: flex; flex-direction: column; gap: 0.6rem;
+                     list-style: none; padding: 0; counter-reset: deck; }
+        .deck-card { display: flex; gap: 1rem; padding: 1rem 1.25rem;
+                     background: var(--bg-card); border: 1px solid var(--border);
+                     border-left: 3px solid var(--accent); border-radius: 6px;
+                     transition: border-color 0.15s; counter-increment: deck; }
+        .deck-card:hover { border-color: var(--accent); }
+        .deck-card .num { font-family: var(--font-mono); font-size: 0.8rem;
+                          color: var(--accent); min-width: 2rem;
+                          padding-top: 0.15rem; }
+        .deck-card .num::before { content: counter(deck, decimal-leading-zero); }
+        .deck-card .body { flex: 1; min-width: 0; }
+        .deck-card .deck-title { font-family: var(--font-display); font-size: 1.05rem;
+                                 font-weight: 600; color: var(--text-primary);
+                                 margin-bottom: 0.2rem; }
+        .deck-card a.deck-title { text-decoration: none; }
+        .deck-card a.deck-title:hover { color: var(--accent); }
+        .deck-card .desc { font-size: 0.92rem; color: var(--text-secondary); }
+        .deck-card .meta { font-family: var(--font-mono); font-size: 0.7rem;
+                           color: var(--text-secondary); margin-top: 0.4rem;
+                           display: flex; gap: 0.6rem; flex-wrap: wrap; }
+        .badge { display: inline-block; font-family: var(--font-mono);
+                 font-size: 0.65rem; padding: 0.1rem 0.5rem; border-radius: 999px;
+                 border: 1px solid var(--border); color: var(--text-secondary); }
+        .badge.live { border-color: var(--accent); color: var(--accent);
+                      background: var(--accent-dim); }
+        .callout { background: var(--bg-card); border-left: 3px solid var(--accent);
+                   border-radius: 0 8px 8px 0; padding: 1rem 1.25rem; margin: 1.5rem 0; }
+        .callout p { margin-bottom: 0; color: var(--text-secondary); }
+        .callout p strong { color: var(--text-primary); }
+        .footer { text-align: center; padding: 3rem 1.5rem;
+                  color: var(--text-secondary); font-size: 0.85rem;
+                  border-top: 1px solid var(--border); max-width: var(--max-width);
+                  margin: 3rem auto 0; }
+        .footer a { color: var(--accent); text-decoration: none; }
+        .footer a:hover { text-decoration: underline; }
+        @media (max-width: 640px) {
+            .hero h1 { font-size: 1.8rem; }
+            .deck-card { flex-direction: column; gap: 0.3rem; }
+        }
+    </style>
+</head>
+<body>
+<header class="hero">
+    <div class="series-label">LLM Hub &mdash; Google TPUs</div>
+    <h1><span class="accent">Google TPU</span> Architectures</h1>
+    <p class="subtitle">Twelve-deck deep tour of Google's Tensor Processing Unit programme &mdash; 2013 voice-search napkin maths to the 9,216-chip Ironwood pod. History, silicon, interconnect, software, and the architectural philosophy that makes a TPU a TPU.</p>
+    <div class="tags">
+        <span class="tag">v1</span><span class="tag">v2</span><span class="tag">v3</span>
+        <span class="tag">v4</span><span class="tag">v4i</span>
+        <span class="tag g">v5e</span><span class="tag g">v5p</span>
+        <span class="tag y">Trillium</span><span class="tag r">Ironwood</span>
+        <span class="tag">Systolic</span><span class="tag">XLA</span><span class="tag">JAX</span>
+    </div>
+</header>
+<main class="container">
+    <h2>Presentations in This Series</h2>
+    <ol class="deck-list">
+<li class="deck-card"><div class="num"></div><div class="body"><a class="deck-title" href="https://brendanjameslynskey.github.io/Google_TPU_01_History_and_People/">History &amp; People &mdash; How the TPU Programme Began &rarr;</a><div class="desc">The 2013 voice-search projection, Norm Jouppi's career arc from Stanford MIPS to Google, David Patterson, the 22-day silicon-to-datacenter dash, AlphaGo, the ISCA 2017 / CACM 2020 / ISCA 2023 papers.</div><div class="meta"><span class="badge live">live</span></div></div></li>
+<li class="deck-card"><div class="num"></div><div class="body"><a class="deck-title" href="https://brendanjameslynskey.github.io/Google_TPU_02_Generations_Overview/">Ten Years of TPUs &mdash; v1 to Ironwood &rarr;</a><div class="desc">Timeline of every TPU generation, what each one unlocked, the e-class / p-class fork, peak FLOPS / HBM / pod scaling, models trained on each. Interactive generation explorer.</div><div class="meta"><span class="badge live">live</span></div></div></li>
+<li class="deck-card"><div class="num"></div><div class="body"><a class="deck-title" href="https://brendanjameslynskey.github.io/Google_TPU_03_Systolic_Arrays/">Systolic Arrays &mdash; The Matmul Engine Inside &rarr;</a><div class="desc">Kung &amp; Leiserson 1978, "Why Systolic Architectures?" 1982, Warp / iWarp, weight-stationary vs output-stationary vs row-stationary dataflows, how a 256&times;256 array maps a matmul. Interactive matmul wavefront.</div><div class="meta"><span class="badge live">live</span></div></div></li>
+<li class="deck-card"><div class="num"></div><div class="body"><a class="deck-title" href="https://brendanjameslynskey.github.io/Google_TPU_04_Inside_TPU_v1/">Inside TPU v1 &mdash; The 2015 Inference Chip &rarr;</a><div class="desc">28 nm, 256&times;256 INT8 systolic, 24 MiB unified buffer, 8 GiB DDR3, the brilliantly minimal CISC ISA, the 92 TOPS roofline and what Google learned about memory bandwidth.</div><div class="meta"><span class="badge live">live</span></div></div></li>
+<li class="deck-card"><div class="num"></div><div class="body"><a class="deck-title" href="https://brendanjameslynskey.github.io/Google_TPU_05_v2_v3_Training_Era/">TPU v2 &amp; v3 &mdash; The Training Era Begins &rarr;</a><div class="desc">bfloat16 (Google Brain's invention), HBM arrives, two TensorCores per chip, the 2D torus pod, why v3 needed liquid cooling.</div><div class="meta"><span class="badge live">live</span></div></div></li>
+<li class="deck-card"><div class="num"></div><div class="body"><a class="deck-title" href="https://brendanjameslynskey.github.io/Google_TPU_06_v4_OCS_SparseCore/">TPU v4 &mdash; OCS, SparseCore &amp; Palomar &rarr;</a><div class="desc">7 nm, 3D torus, the Palomar 3D-MEMS optical circuit switch, SparseCore embedding accelerator, CMEM, the v4i inference sibling, PaLM at 6,144 chips.</div><div class="meta"><span class="badge live">live</span></div></div></li>
+<li class="deck-card"><div class="num"></div><div class="body"><a class="deck-title" href="https://brendanjameslynskey.github.io/Google_TPU_07_v5e_v5p_Split/">TPU v5e &amp; v5p &mdash; The Two-Track Fork &rarr;</a><div class="desc">The efficiency / performance product fork, v5p as the Gemini training flagship, 95 GB HBM, the 8,960-chip pod, multislice over Jupiter DCN.</div><div class="meta"><span class="badge live">live</span></div></div></li>
+<li class="deck-card"><div class="num"></div><div class="body"><a class="deck-title" href="https://brendanjameslynskey.github.io/Google_TPU_08_Trillium_Ironwood/">Trillium &amp; Ironwood &mdash; v6e and v7 &rarr;</a><div class="desc">Trillium's 4.7&times; jump and 3rd-gen SparseCore, Ironwood's 4.6 PFLOPS FP8 / 192 GB HBM3e per chip, the 9,216-chip "age of inference" pod.</div><div class="meta"><span class="badge live">live</span></div></div></li>
+<li class="deck-card"><div class="num"></div><div class="body"><a class="deck-title" href="https://brendanjameslynskey.github.io/Google_TPU_09_Memory_and_Numerics/">Memory Hierarchy &amp; Numerics &rarr;</a><div class="desc">VMEM, CMEM, HBM2 to HBM3e, the bf16 invention story, INT8 + FP8, accumulator widths, why each precision change doubled effective FLOPS.</div><div class="meta"><span class="badge live">live</span></div></div></li>
+<li class="deck-card"><div class="num"></div><div class="body"><a class="deck-title" href="https://brendanjameslynskey.github.io/Google_TPU_10_ICI_and_OCS/">ICI, OCS &amp; the 3D Torus &rarr;</a><div class="desc">Custom-SerDes Inter-Chip Interconnect, 2D vs 3D torus, the Palomar 136-port optical switch, twisted-torus topologies, healing around faulty cubes, multipod over Jupiter DCN.</div><div class="meta"><span class="badge live">live</span></div></div></li>
+<li class="deck-card"><div class="num"></div><div class="body"><a class="deck-title" href="https://brendanjameslynskey.github.io/Google_TPU_11_Software_Stack/">The TPU Software Stack &mdash; XLA, JAX, Pallas &rarr;</a><div class="desc">XLA / HLO / StableHLO, JAX transformations and sharding, GSPMD &amp; Shardy partitioning, Pallas / Mosaic kernels, PyTorch-XLA &amp; TorchTPU, MaxText, Pathways, Multislice.</div><div class="meta"><span class="badge live">live</span></div></div></li>
+<li class="deck-card"><div class="num"></div><div class="body"><a class="deck-title" href="https://brendanjameslynskey.github.io/Google_TPU_12_TPU_vs_GPU/">TPU vs GPU &mdash; Two Architectural Philosophies &rarr;</a><div class="desc">Static-compiler vs dynamic-warp scheduling, scratchpad vs cache, AOT graph vs JIT kernel, 3D torus vs fat-tree InfiniBand, where each wins, the cloud-only constraint.</div><div class="meta"><span class="badge live">live</span></div></div></li>
+    </ol>
+
+    <div class="callout">
+        <p><strong>Why a TPU sub-hub?</strong> The TPU has been the silent partner of LLM history &mdash; AlphaGo ran on v1, every public Gemini model trained on v4 or v5p, and Ironwood pods serve more inference traffic than any rack of GPUs at Google. Yet most LLM engineers know the chip only as a black box behind <code>jax.jit</code>. This series opens the box: the hardware, the interconnect, the compiler, and the ten years of design choices that produced something genuinely different from a GPU.</p>
+    </div>
+</main>
+
+<footer class="footer">
+    <p>Part of the <a href="https://github.com/BrendanJamesLynskey/LLMs">LLMs hub</a> &mdash; an index of presentation series for AI/LLM engineers.</p>
+    <p style="margin-top: 0.5rem;">Companion sub-hubs: <a href="https://github.com/BrendanJamesLynskey/LLM_Hub_NVIDIA_GPUs">NVIDIA GPUs</a> &middot; <a href="https://github.com/BrendanJamesLynskey/LLM_Hub_CUDA">CUDA</a> &middot; <a href="https://github.com/BrendanJamesLynskey/LLM_Hub_Local_LLM_Hosting">Local LLM Hosting</a></p>
+</footer>
+</body>
+</html>

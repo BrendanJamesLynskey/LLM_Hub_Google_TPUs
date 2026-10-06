@@ -21,6 +21,10 @@ Deep technical tour of Google's Tensor Processing Unit programme &mdash; from th
 | 11 | [The TPU Software Stack &mdash; XLA, JAX, Pallas](https://brendanjameslynskey.github.io/Google_TPU_11_Software_Stack/) | live | XLA / HLO / StableHLO, JAX transformations and sharding, GSPMD &amp; Shardy partitioning, Pallas / Mosaic kernels, PyTorch-XLA &amp; TorchTPU, MaxText, Pathways, Multislice. |
 | 12 | [TPU vs GPU &mdash; Two Architectural Philosophies](https://brendanjameslynskey.github.io/Google_TPU_12_TPU_vs_GPU/) | live | Static-compiler vs dynamic-warp scheduling, scratchpad vs cache, AOT graph vs JIT kernel, 3D torus vs fat-tree InfiniBand, where each wins, the cloud-only constraint. |
 
+## Related
+
+**Related site:** [Systolic Arrays Explained](https://systolic-arrays-explained.vercel.app/) ([code](https://github.com/BrendanJamesLynskey/systolic-arrays-explained)) is an interactive companion to this series: the matrix hardware of TPUs in 9 chapters, each built around an animation computed by a cycle-accurate model: why systolic, weight-stationary cycle by cycle, output- and input-stationary, skew, fill and drain, tiling big GEMMs with double-buffered weights, inside a PE (a bfloat16/FP16/INT8 MAC pipeline checked against RTL), the TPU and an all-reduce on a 2-D torus, other ways to build it, and an ONNX graph lowered onto the array. Its chapters link the matching slides of this series, Systolic Arrays (03) and Inside TPU v1 (04) above all.
+
 ## Where this fits
 
 Part of the [LLMs hub](https://github.com/BrendanJamesLynskey/LLMs) &mdash; an index of presentation series for AI/LLM engineers. See the companion [NVIDIA GPU Architectures](https://github.com/BrendanJamesLynskey/LLM_Hub_NVIDIA_GPUs) and [CUDA Programming](https://github.com/BrendanJamesLynskey/LLM_Hub_CUDA) sub-hubs for the GPU side of the story.
